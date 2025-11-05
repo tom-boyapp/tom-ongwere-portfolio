@@ -763,6 +763,77 @@ main {
 
 .clients-item img:hover { filter: grayscale(0); }
 
+.clients-item-text {
+  color: var(--light-gray);
+  font-size: var(--fs-7);
+  font-weight: var(--fw-300);
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Ensure testimonial-style cards used inside the clients grid
+   have a sensible min-height and clamp text so it doesn't overflow */
+.clients-item .content-card {
+  /* reduce padding slightly for better fit in small containers */
+  padding: 16px;
+  padding-top: 22px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.clients-item .testimonials-item-title {
+  margin-bottom: 8px;
+}
+
+.clients-item .testimonials-text {
+  color: var(--light-gray);
+  font-size: var(--fs-7);
+  font-weight: var(--fw-300);
+  line-height: 1.4;
+  /* limit to a few lines and hide the rest to keep cards uniform */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Style for student cards (avatar + name) inside the clients grid */
+.clients-item > a { display: block; color: inherit; }
+.clients-item .content-card {
+  padding: 18px;
+  padding-top: 20px;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.clients-item .testimonials-avatar-box {
+  position: static;
+  transform: none;
+  margin: 0 0 10px 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.clients-item .testimonials-avatar-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.clients-item .testimonials-item-title {
+  margin: 0;
+  font-size: var(--fs-6);
+}
+
 
 
 
