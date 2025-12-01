@@ -140,20 +140,66 @@ for (let i = 0; i < formInputs.length; i++) {
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
-// add event to all nav link
-for (let i = 0; i < navigationLinks.length; i++) {
-  navigationLinks[i].addEventListener("click", function () {
+// Robust navigation handler using explicit data-target attributes
+navigationLinks.forEach(link => {
+  link.addEventListener('click', function () {
+    // prefer explicit mapping via `data-target`; fallback to button text if absent
+    const target = (this.dataset.target || this.innerText || '').toLowerCase().trim();
+    if (!target) return;
 
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
-      } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
-      }
-    }
+    // activate the matching page and deactivate others
+    pages.forEach(page => {
+      if ((page.dataset.page || '').toLowerCase() === target) page.classList.add('active');
+      else page.classList.remove('active');
+    });
 
+    // update link active state
+    navigationLinks.forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+
+    window.scrollTo(0, 0);
   });
+});
+
+// Measure navbar height and set CSS variable so layout/scroll spacing matches the actual navbar size
+function updateNavbarSafe() {
+  const navbar = document.querySelector('.navbar');
+  if (!navbar) return;
+  // include a small buffer so we don't sit flush against the navbar
+  const buffer = 16;
+  const height = navbar.offsetHeight || 0;
+  // determine if navbar is visually at the top or bottom by checking computed style
+  const cs = window.getComputedStyle(navbar);
+  const rect = navbar.getBoundingClientRect();
+  // Consider the navbar to be "at top" only if it actually sits near the viewport top.
+  // This avoids treating an absolutely-positioned navbar inside a centered container
+  // (which may have top:0 relative to its container) as a top-of-viewport navbar.
+  const isNearViewportTop = rect.top <= 8; // small threshold in px
+  const isTop = isNearViewportTop && (cs.position === 'absolute' || cs.position === 'fixed' || cs.position === 'sticky');
+  const isFixedBottom = cs.position === 'fixed' && cs.bottom !== 'auto';
+  if (isTop) {
+    document.documentElement.classList.add('navbar-at-top');
+    document.documentElement.classList.remove('navbar-at-bottom');
+    // set the top-safe spacing so CSS can push content down
+    document.documentElement.style.setProperty('--navbar-safe-top', `${height + buffer}px`);
+    document.documentElement.style.setProperty('--navbar-safe-bottom', `0px`);
+    // No inline positioning here — let CSS place the navbar relative to the layout.
+  } else {
+    // default to bottom behavior
+    document.documentElement.classList.remove('navbar-at-top');
+    document.documentElement.classList.add('navbar-at-bottom');
+    document.documentElement.style.setProperty('--navbar-safe-bottom', `${height + buffer}px`);
+    document.documentElement.style.setProperty('--navbar-safe-top', `0px`);
+    // clear any inline positioning so CSS can handle bottom-fixed layout
+    navbar.style.removeProperty('top');
+    navbar.style.removeProperty('left');
+    navbar.style.removeProperty('position');
+  }
 }
+
+// update on load and whenever viewport changes
+window.addEventListener('load', updateNavbarSafe);
+window.addEventListener('resize', updateNavbarSafe);
+window.addEventListener('orientationchange', updateNavbarSafe);
+// call once in case script runs after load
+updateNavbarSafe();

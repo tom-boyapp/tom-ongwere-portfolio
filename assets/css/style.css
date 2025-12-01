@@ -108,6 +108,9 @@
 
   --transition-1: 0.25s ease;
   --transition-2: 0.5s ease-in-out;
+  /* fallback navbar-safe spacing; JS will update these to the actual navbar height + buffer */
+  --navbar-safe-top: 0px;
+  --navbar-safe-bottom: 140px;
 
 }
 
@@ -153,7 +156,10 @@ input, textarea {
 
 :focus { outline-color: var(--orange-yellow-crayola); }
 
-html { font-family: var(--ff-poppins); }
+html { font-family: var(--ff-poppins); 
+  /* ensure the bottom-fixed navbar doesn't cover focused/fragment-scrolled content */
+  scroll-padding-bottom: var(--navbar-safe-bottom);
+}
 
 body { background: var(--app-bg, #BCDDDC); }
 
@@ -240,6 +246,15 @@ article.active {
 .article-title {
   position: relative;
   padding-bottom: 7px;
+  /* ensure headings won't be hidden when browser scrolls/focuses them */
+  scroll-margin-top: calc(var(--navbar-safe-top) + 8px);
+}
+
+/* When the navbar is visually positioned at the top (desktop layout), push the main
+   content down so the navbar doesn't sit on top of the main box. JS toggles the
+   `navbar-at-top` class on the documentElement when applicable. */
+.navbar-at-top main {
+  padding-top: var(--navbar-safe-top);
 }
 
 .article-title::after {
@@ -300,7 +315,8 @@ article.active {
 
 main {
   margin: 15px 12px;
-  margin-bottom: 75px;
+  /* increase bottom margin so the fixed bottom navbar doesn't overlap content */
+  margin-bottom: var(--navbar-safe-bottom);
   min-width: 259px;
 }
 
@@ -457,7 +473,7 @@ main {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: var(--navbar-bg, rgba(114, 176, 171, 0.75));
+  background: rgba(136, 136, 136, 0.75);
   backdrop-filter: blur(10px);
   border: 1px solid var(--jet);
   border-radius: 12px 12px 0 0;
@@ -1959,43 +1975,47 @@ textarea.form-input::-webkit-resizer { display: none; }
 
 }
 
-/* === THEME: Sapphire + Arctic (Tom) === */
+/* === THEME: Neutral palette (custom) === */
 :root{
-  /* brand colors */
-  --bg-sapphire: #72B0AB;  /* darker teal */
-  --bg-arctic:   #BCDDDC;  /* light teal */
+  /* brand colors (neutral) */
+  --bg-sapphire: #cfcfcf;  /* subtle mid-gray */
+  --bg-arctic:   #e7e7e7;  /* very light gray */
 
   /* page background (subtle layered gradient for depth) */
   --app-bg:
-    radial-gradient(1200px 800px at -8% -12%, rgba(188,221,220,0.45) 0%, transparent 60%),
-    radial-gradient(1000px 700px at 112% 120%, rgba(114,176,171,0.35) 0%, transparent 60%),
+    radial-gradient(1200px 800px at -8% -12%, rgba(246,246,246,0.6) 0%, transparent 60%),
+    radial-gradient(1000px 700px at 112% 120%, rgba(220,220,220,0.35) 0%, transparent 60%),
     linear-gradient(180deg, var(--bg-arctic) 0%, var(--bg-sapphire) 100%);
 
   /* navbar tint that matches the palette */
-  --navbar-bg: rgba(114, 176, 171, 0.75); /* Sapphire @ 75% */
+  --navbar-bg: rgba(224, 224, 224, 0.06);
 
-  /* optional: cool-tinted card surfaces so they “sit” on the new bg */
-  --eerie-black-1: #2f3f40; /* slightly cool, still dark for contrast */
-  --eerie-black-2: #273436;
+  /* neutral card surfaces (dark-neutral for contrast with light text) */
+  --eerie-black-1: #2f3436; /* dark slate */
+  --eerie-black-2: #27292a; /* card background */
 
-  /* optional: recolor internal gradients used on cards/icons so they’re teal-ish instead of gray */
+  /* neutral gradients used on cards/icons */
   --bg-gradient-onyx: linear-gradient(
     to bottom right,
-    rgba(114,176,171,0.25) 0%,
-    rgba(114,176,171,0.00) 50%
+    rgba(80,80,80,0.12) 0%,
+    rgba(80,80,80,0.00) 50%
   );
   --bg-gradient-jet: linear-gradient(
     to bottom right,
-    rgba(114,176,171,0.18) 0%,
+    rgba(60,60,60,0.12) 0%,
     rgba(39,52,54,0) 100%
-  ), #273436;
+  ), #27292a;
+
+  /* muted accent */
+  --orange-yellow-crayola: #ffbe45;
+  --text-gradient-yellow: linear-gradient(to right, #bead8e, #96773e);
 }
 
-/* Panels — LIGHTER teal */
+/* Panels — LIGHTER neutral overrides */
 :root{
-  --eerie-black-2: #4E8E89;  /* base */
-  --eerie-black-1: #5A9A95;  /* inner/hover */
-  --jet: rgba(24, 48, 47, 0.28);
+  --eerie-black-2: #52575a;  /* base */
+  --eerie-black-1: #8b8b8b;  /* inner/hover */
+  --jet: rgba(0, 0, 0, 0.22);
 }
 
 
