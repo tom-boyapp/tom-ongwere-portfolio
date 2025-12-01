@@ -478,7 +478,8 @@ main {
   border: 1px solid var(--jet);
   border-radius: 12px 12px 0 0;
   box-shadow: var(--shadow-2);
-  z-index: 5;
+  z-index: 9999; /* ensure navbar is above other page elements so it remains clickable */
+  pointer-events: auto;
 }
 
 .navbar-list {
@@ -1802,6 +1803,8 @@ textarea.form-input::-webkit-resizer { display: none; }
     border-radius: 0 20px;
     padding: 0 20px;
     box-shadow: none;
+    z-index: 9999; /* match mobile variant so navbar stays above other content */
+    pointer-events: auto;
   }
 
   .navbar-list {
